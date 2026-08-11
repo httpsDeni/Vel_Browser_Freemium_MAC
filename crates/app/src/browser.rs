@@ -70,7 +70,13 @@ impl Browser {
                 false,
             )
         };
-        window.setTitle(&NSString::from_str("Vel"));
+        let entitlements = Entitlements::load();
+        let title = if entitlements.is_supporter() {
+            "Vel ✨ VIP"
+        } else {
+            "Vel"
+        };
+        window.setTitle(&NSString::from_str(title));
         window.setTitlebarAppearsTransparent(true);
         window.setTitleVisibility(NSWindowTitleVisibility::Hidden);
         window.setMinSize(NSSize::new(480.0, 360.0));
@@ -96,7 +102,7 @@ impl Browser {
             host: Host::new(Session::Persistent, mtm),
             rules: Rules::new(),
             tabs: Tabs::new(),
-            entitlements: Entitlements::load(),
+            entitlements,
         }
     }
 
