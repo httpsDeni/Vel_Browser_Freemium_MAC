@@ -4,6 +4,9 @@
 # Built application bundle — reproduce with ./build/bundle.sh
 /dist/
 
+# Standalone Landing Page Repository
+Landingpage_Vel/
+
 # Supporter & License Key Files (Prevent security leaks)
 *.key
 supporter.key
