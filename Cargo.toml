@@ -1,0 +1,34 @@
+[workspace]
+resolver = "2"
+members = ["crates/blocker", "crates/engine", "crates/pro", "crates/app"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT"
+authors = ["httpsDeni"]
+
+[workspace.dependencies]
+objc2 = "0.6"
+objc2-foundation = "0.3"
+objc2-app-kit = "0.3"
+objc2-web-kit = "0.3"
+objc2-core-foundation = "0.3"
+objc2-quartz-core = "0.3"
+block2 = "0.6"
+
+# The browser does no rendering work of its own — WebKit owns the frame loop and
+# VideoToolbox owns the decode. What this binary must never do is get in the way:
+# every millisecond spent here is a millisecond WebKit is not compositing. So the
+# release profile optimises for a small, fully-inlined binary that stays out of
+# the way, and aborts rather than unwinding across an Objective-C frame.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 1

@@ -1,0 +1,25 @@
+# Rust build output
+/target/
+
+# Built application bundle — reproduce with ./build/bundle.sh
+/dist/
+
+# Supporter & License Key Files (Prevent security leaks)
+*.key
+supporter.key
+*.pem
+*.p12
+
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node & Frontend dependencies
+node_modules/
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/

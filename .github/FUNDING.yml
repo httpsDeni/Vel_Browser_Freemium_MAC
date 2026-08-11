@@ -1,0 +1,12 @@
+# Shows the "Sponsor" button on the repository page.
+#
+# Keep these in step with crates/pro/src/config.rs — that file is what the
+# application itself opens from the Vel menu, and this one is what GitHub
+# shows. Nothing keeps them in sync automatically.
+
+github: [httpsDeni]
+
+# Lemon Squeezy checkout. Replace with the buy link from
+# Products -> your product -> Share, then paste the same URL into
+# crates/pro/src/config.rs as CHECKOUT_URL.
+custom: ["https://vel.lemonsqueezy.com/checkout/buy/28763ca3-b0e6-43d6-af26-037f6febc669"]

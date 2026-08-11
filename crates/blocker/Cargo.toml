@@ -1,0 +1,12 @@
+[package]
+name = "vel-blocker"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Adblock Plus syntax to WebKit content-blocking rules"
+
+[dependencies]
+adblock = { version = "0.13", features = ["content-blocking"] }
+serde_json = "1"

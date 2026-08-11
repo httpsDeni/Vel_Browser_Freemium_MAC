@@ -1,0 +1,50 @@
+[package]
+name = "vel-engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "WKWebView wrapper tuned for hardware-decoded video"
+
+[dependencies]
+objc2 = { workspace = true }
+block2 = { workspace = true }
+objc2-core-foundation = { workspace = true }
+
+[dependencies.objc2-foundation]
+workspace = true
+features = ["std", "NSString", "NSURL", "NSURLRequest", "NSArray", "NSObject", "NSError", "NSGeometry", "NSDictionary", "NSValue"]
+
+[dependencies.objc2-app-kit]
+workspace = true
+features = ["std", "NSView", "NSResponder", "NSGraphics"]
+
+[dependencies.objc2-web-kit]
+workspace = true
+features = [
+  "std",
+  "block2",
+  "WKWebView",
+  "WKWebViewConfiguration",
+  "WKPreferences",
+  "WKUserContentController",
+  "WKUserScript",
+  "WKContentRuleList",
+  "WKContentRuleListStore",
+  "WKWebsiteDataStore",
+  "WKProcessPool",
+  "WKWebpagePreferences",
+  "WKNavigationDelegate",
+  "WKNavigation",
+  "WKNavigationAction",
+  "WKNavigationResponse",
+  "WKUIDelegate",
+  "WKScriptMessage",
+  "WKScriptMessageHandler",
+  "WKFrameInfo",
+  "WKBackForwardList",
+  "WKWindowFeatures",
+  "WKSecurityOrigin",
+  "WKError",
+]

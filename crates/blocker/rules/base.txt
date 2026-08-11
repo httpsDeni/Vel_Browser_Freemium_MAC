@@ -1,0 +1,102 @@
+! Vel — built-in blocklist (Adblock Plus syntax)
+!
+! Deliberately small. Every rule here becomes a trigger WebKit evaluates
+! against every request, so this list is tuned for the ratio that matters on
+! a video-first browser: bytes and connections saved per rule, not raw
+! coverage. Point Vel at EasyList if you want exhaustive filtering; this is
+! the floor that makes YouTube and Twitch load fast out of the box.
+!
+! Hard rule for anything added here: NEVER match a media delivery host.
+! googlevideo.com, *.ttvnw.net, video-edge-*, and the Akamai/Fastly edges
+! carry the actual video. A rule that catches one of them trades ads for a
+! permanent spinner. The `no_rule_touches_media_delivery` test in lib.rs
+! enforces this.
+
+! ---------------------------------------------------------------- ad serving
+||doubleclick.net^
+||googlesyndication.com^
+||googleadservices.com^
+||googletagservices.com^
+||adservice.google.com^
+||amazon-adsystem.com^
+||adnxs.com^
+||adsrvr.org^
+||rubiconproject.com^
+||pubmatic.com^
+||openx.net^
+||criteo.com^
+||criteo.net^
+||casalemedia.com^
+||smartadserver.com^
+||sharethrough.com^
+||moatads.com^
+||teads.tv^
+||taboola.com^
+||outbrain.com^
+||zedo.com^
+||adform.net^
+||360yield.com^
+||bidswitch.net^
+
+! ------------------------------------------------------------ analytics / RUM
+||google-analytics.com^
+||googletagmanager.com^
+||scorecardresearch.com^
+||quantserve.com^
+||quantcount.com^
+||hotjar.com^
+||hotjar.io^
+||mixpanel.com^
+||amplitude.com^
+||fullstory.com^
+||mouseflow.com^
+||crazyegg.com^
+||luckyorange.com^
+||nr-data.net^
+||chartbeat.com^
+||chartbeat.net^
+||parsely.com^
+||branch.io^
+||adjust.com^
+||appsflyer.com^
+
+! ---------------------------------------------------------- social / pixel tags
+||connect.facebook.net^
+||facebook.com/tr
+||ads-twitter.com^
+||analytics.twitter.com^
+||bat.bing.com^
+||ads.linkedin.com^
+||analytics.tiktok.com^
+||ads.pinterest.com^
+||snap.licdn.com^
+
+! ------------------------------------------------------------------- youtube
+! Ad negotiation and playback telemetry only. The player, the API, and every
+! googlevideo.com range request are left strictly alone.
+||youtube.com/api/stats/ads
+||youtube.com/api/stats/qoe
+||youtube.com/pagead/
+||youtube.com/ptracking
+||youtube.com/get_midroll_info
+||googleads.g.doubleclick.net^
+||static.doubleclick.net^
+||s.youtube.com^
+
+! -------------------------------------------------------------------- twitch
+! Note: Twitch stitches video ads into the HLS manifest itself, from the same
+! hosts as the stream. No content blocker can strip those without proxying
+! and rewriting the playlist — see the README. What follows is display ads
+! and telemetry, which is what is actually separable.
+||twitchads.com^
+||ads.twitch.tv^
+||spade.twitch.tv^
+||countess.twitch.tv^
+
+! ------------------------------------------------------------------ consent
+! Cookie walls are pure layout jank on a video page.
+||cookielaw.org^
+||onetrust.com^
+||cookiebot.com^
+||quantcast.mgr.consensu.org^
+||consent.cookiebot.eu^

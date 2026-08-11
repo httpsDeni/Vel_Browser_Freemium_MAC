@@ -1,0 +1,72 @@
+[package]
+name = "vel"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "A minimal, fast macOS browser"
+
+[[bin]]
+name = "vel"
+path = "src/main.rs"
+
+[dependencies]
+vel-engine = { path = "../engine" }
+vel-pro = { path = "../pro" }
+objc2 = { workspace = true }
+block2 = { workspace = true }
+objc2-core-foundation = { workspace = true }
+objc2-quartz-core = { workspace = true, features = ["std", "CALayer"] }
+
+[dependencies.objc2-foundation]
+workspace = true
+features = ["std", "NSString", "NSURL", "NSArray", "NSObject", "NSError", "NSGeometry", "NSNotification", "NSDictionary", "NSValue", "NSTimer", "NSRunLoop", "NSDate", "NSBundle", "NSProcessInfo"]
+
+[dependencies.objc2-app-kit]
+workspace = true
+features = [
+  "std",
+  "NSApplication",
+  "NSWindow",
+  "NSView",
+  "NSResponder",
+  "NSMenu",
+  "NSMenuItem",
+  "NSTextField",
+  "NSControl",
+  "NSVisualEffectView",
+  "NSColor",
+  "NSEvent",
+  "NSGraphics",
+  "NSScreen",
+  "NSButton",
+  "NSCell",
+  "NSText",
+  "NSFont",
+  "NSImage",
+  "NSAppearance",
+  "NSRunningApplication",
+  "NSPasteboard",
+  "objc2-quartz-core",
+]
+
+[dependencies.objc2-web-kit]
+workspace = true
+features = [
+  "std",
+  "block2",
+  "WKWebView",
+  "WKWebViewConfiguration",
+  "WKUserContentController",
+  "WKScriptMessage",
+  "WKScriptMessageHandler",
+  "WKNavigationDelegate",
+  "WKNavigation",
+  "WKNavigationAction",
+  "WKUIDelegate",
+  "WKFrameInfo",
+  "WKWindowFeatures",
+  "WKSecurityOrigin",
+  "objc2-app-kit",
+]

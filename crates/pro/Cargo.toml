@@ -1,0 +1,21 @@
+[package]
+name = "vel-pro"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Supporter features and the line they sit behind"
+
+[dependencies]
+vel-blocker = { path = "../blocker" }
+serde_json = "1"
+objc2 = { workspace = true }
+block2 = { workspace = true }
+
+[dependencies.objc2-foundation]
+workspace = true
+features = ["std", "NSString", "NSURL", "NSURLRequest", "NSURLResponse", "NSURLSession", "NSData", "NSError", "NSObject", "NSOperation", "NSDictionary"]
+
+[dev-dependencies]
+serde_json = "1"
