@@ -69,6 +69,7 @@ pub struct Chrome {
     back: Retained<NSButton>,
     forward: Retained<NSButton>,
     new_tab: Retained<NSButton>,
+    vip_badge: Option<Retained<NSTextField>>,
     strip: Retained<NSView>,
     tabs: Vec<TabButton>,
     /// Tab ids the strip was last built for. Rebuilding is only necessary
@@ -115,6 +116,22 @@ impl Chrome {
         }
         pill.addSubview(&field);
 
+        let entitlements = vel_pro::Entitlements::load();
+        let vip_badge = if entitlements.is_supporter() {
+            let label = NSTextField::new(mtm);
+            label.setStringValue(&NSString::from_str("✨ VIP"));
+            label.setBezeled(false);
+            label.setBordered(false);
+            label.setDrawsBackground(false);
+            label.setFont(Some(&NSFont::boldSystemFontOfSize(11.0)));
+            label.setTextColor(Some(&NSColor::colorWithRed_green_blue_alpha(1.0, 0.78, 0.2, 1.0)));
+            label.setAlignment(NSTextAlignment::Center);
+            pill.addSubview(&label);
+            Some(label)
+        } else {
+            None
+        };
+
         let strip = NSView::new(mtm);
         bar.addSubview(&strip);
 
@@ -125,6 +142,7 @@ impl Chrome {
             back,
             forward,
             new_tab,
+            vip_badge,
             strip,
             tabs: Vec::new(),
             built_for: Vec::new(),
@@ -309,10 +327,22 @@ impl Chrome {
             NSPoint::new(pill_x, row_mid - PILL_H / 2.0),
             NSSize::new(pill_w, PILL_H),
         ));
-        self.field.setFrame(NSRect::new(
-            NSPoint::new(PAD, (PILL_H - 18.0) / 2.0),
-            NSSize::new((pill_w - PAD * 2.0).max(0.0), 18.0),
-        ));
+        if let Some(badge) = &self.vip_badge {
+            let badge_w = 48.0;
+            badge.setFrame(NSRect::new(
+                NSPoint::new((pill_w - badge_w - 6.0).max(0.0), (PILL_H - 18.0) / 2.0),
+                NSSize::new(badge_w, 18.0),
+            ));
+            self.field.setFrame(NSRect::new(
+                NSPoint::new(PAD, (PILL_H - 18.0) / 2.0),
+                NSSize::new((pill_w - PAD * 2.0 - badge_w).max(0.0), 18.0),
+            ));
+        } else {
+            self.field.setFrame(NSRect::new(
+                NSPoint::new(PAD, (PILL_H - 18.0) / 2.0),
+                NSSize::new((pill_w - PAD * 2.0).max(0.0), 18.0),
+            ));
+        }
 
         let has_strip = tab_count > 1;
         self.strip.setHidden(!has_strip);
