@@ -21,10 +21,13 @@ import {
   AlertCircle,
   MessageSquare,
   Image as ImageIcon,
-  Eye
+  Eye,
+  ExternalLink
 } from 'lucide-react';
 
 export default function App() {
+  const LEMON_SQUEEZY_BUY_URL = "https://vel.lemonsqueezy.com/checkout/buy/28763ca3-b0e6-43d6-af26-037f6febc669";
+
   // State for Feature Showcase Carousel using real images
   const [selectedFeature, setSelectedFeature] = useState(0);
 
@@ -128,7 +131,7 @@ export default function App() {
     } else {
       setKeyStatus({
         type: 'error',
-        message: 'Formato de chave inválido. Use o formato VEL-XXXXXXXX-CCCC ou cole seu token UUID.'
+        message: 'Formato de chave inválido. Use o formato VEL-XXXXXXXX-CCCC ou cole seu token UUID do Lemon Squeezy.'
       });
     }
   };
@@ -174,11 +177,13 @@ export default function App() {
             </button>
 
             <a 
-              href="#planos" 
+              href={LEMON_SQUEEZY_BUY_URL}
+              target="_blank"
+              rel="noreferrer"
               className="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 rounded-lg shadow-md shadow-orange-500/25 transition-all flex items-center space-x-1.5"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Baixar (.dmg)</span>
+              <Heart className="w-3.5 h-3.5 fill-white" />
+              <span>Comprar Pro (R$ 9,99/mês)</span>
             </a>
           </div>
         </div>
@@ -212,11 +217,14 @@ export default function App() {
           </a>
 
           <a
-            href="#planos"
+            href={LEMON_SQUEEZY_BUY_URL}
+            target="_blank"
+            rel="noreferrer"
             className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/15 text-white font-semibold rounded-xl transition-all flex items-center justify-center space-x-2 text-base backdrop-blur-md"
           >
             <Heart className="w-5 h-5 text-orange-400 fill-orange-400/20" />
-            <span>Plano Pro (R$ 9,99 / mês)</span>
+            <span>Assinar Plano Pro (R$ 9,99 / mês)</span>
+            <ExternalLink className="w-4 h-4 text-slate-400" />
           </a>
         </div>
 
@@ -528,12 +536,23 @@ export default function App() {
             </div>
 
             <div className="space-y-3">
-              <button
-                onClick={() => setIsKeyModalOpen(true)}
+              <a
+                href={LEMON_SQUEEZY_BUY_URL}
+                target="_blank"
+                rel="noreferrer"
                 className="w-full py-3.5 px-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-xl shadow-lg shadow-orange-500/30 transition-all text-xs flex items-center justify-center space-x-2"
               >
                 <Heart className="w-4 h-4 fill-white" />
-                <span>Assinar Plano Pro (R$ 9,99/mês) ou Ativar Chave</span>
+                <span>Assinar Plano Pro no Lemon Squeezy (R$ 9,99/mês)</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+
+              <button
+                onClick={() => setIsKeyModalOpen(true)}
+                className="w-full py-2.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-medium rounded-xl transition-all text-xs flex items-center justify-center space-x-1.5"
+              >
+                <Key className="w-3.5 h-3.5 text-amber-400" />
+                <span>Já possui uma chave? Ativar aqui</span>
               </button>
             </div>
           </div>
@@ -555,7 +574,7 @@ export default function App() {
           {[
             {
               q: "Como funciona a assinatura do Plano Pro (R$ 9,99/mês)?",
-              a: "Você assina o plano Pro por R$ 9,99/mês (BRL) e recebe imediatamente sua chave de apoiador para liberar todos os recursos Pro (AdBlocker em Rust, Economizador de Memória e Picture-in-Picture)."
+              a: "Você assina o plano Pro pelo Lemon Squeezy por R$ 9,99/mês (BRL) e recebe imediatamente sua chave de apoiador para liberar todos os recursos Pro (AdBlocker em Rust, Economizador de Memória e Picture-in-Picture)."
             },
             {
               q: "O Vel Browser funciona em Macs com processador M1/M2/M3/M4 e Intel?",
@@ -703,6 +722,18 @@ export default function App() {
                 </button>
               </div>
             </form>
+
+            <div className="mt-5 pt-4 border-t border-white/10 text-center space-y-2">
+              <div className="text-xs text-slate-400">Ainda não possui uma assinatura Pro?</div>
+              <a
+                href={LEMON_SQUEEZY_BUY_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center space-x-1 text-xs text-orange-400 font-bold hover:underline"
+              >
+                <span>Assinar no Lemon Squeezy (R$ 9,99/mês) →</span>
+              </a>
+            </div>
           </div>
         </div>
       )}
