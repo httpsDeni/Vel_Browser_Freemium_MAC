@@ -132,6 +132,21 @@ define_class!(
                 }
             }
         }
+
+        #[unsafe(method(windowWillClose:))]
+        fn window_will_close(&self, notification: &NSNotification) {
+            if let Some(closing_win) = notification.object() {
+                if let Ok(win) = closing_win.downcast::<objc2_app_kit::NSWindow>() {
+                    if let Ok(mut second_slot) = self.ivars().second_browser.try_borrow_mut() {
+                        if let Some(second) = second_slot.as_ref() {
+                            if second.window() == &*win {
+                                *second_slot = None;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     unsafe impl WKNavigationDelegate for Delegate {
@@ -298,9 +313,14 @@ define_class!(
             // Snap primary window to Left 50%
             self.with(|browser, _| browser.snap_left(mtm));
 
-            // Check if second browser window exists, otherwise create it on Right 50%
+            // Check if second browser window exists and is visible, otherwise create it on Right 50%
             let mut second_slot = self.ivars().second_browser.borrow_mut();
-            if second_slot.is_none() {
+            let need_new = match second_slot.as_ref() {
+                None => true,
+                Some(second) => !second.window().isVisible(),
+            };
+
+            if need_new {
                 let right_rect = if let Some(screen) = objc2_app_kit::NSScreen::mainScreen(mtm) {
                     let visible = screen.visibleFrame();
                     let half_w = visible.size.width / 2.0;
