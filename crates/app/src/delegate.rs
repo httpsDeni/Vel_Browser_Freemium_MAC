@@ -441,6 +441,27 @@ impl Delegate {
     /// process down. Dropping the inner action is a bad outcome; aborting on
     /// a keystroke is a worse one.
     fn with<R>(&self, f: impl FnOnce(&mut Browser, Wiring<'_>) -> R) -> Option<R> {
+        let is_second_key = if let Ok(second_slot) = self.ivars().second_browser.try_borrow() {
+            second_slot.as_ref().map(|b| b.window().isKeyWindow()).unwrap_or(false)
+        } else {
+            false
+        };
+
+        let wiring = Wiring {
+            nav: ProtocolObject::from_ref(self),
+            ui: ProtocolObject::from_ref(self),
+            msg: ProtocolObject::from_ref(self),
+            target: self.as_any(),
+        };
+
+        if is_second_key {
+            if let Ok(mut second_slot) = self.ivars().second_browser.try_borrow_mut() {
+                if let Some(browser) = second_slot.as_mut() {
+                    return Some(f(browser, wiring));
+                }
+            }
+        }
+
         let mut slot = match self.ivars().browser.try_borrow_mut() {
             Ok(slot) => slot,
             Err(_) => {
@@ -449,12 +470,6 @@ impl Delegate {
             }
         };
         let browser = slot.as_mut()?;
-        let wiring = Wiring {
-            nav: ProtocolObject::from_ref(self),
-            ui: ProtocolObject::from_ref(self),
-            msg: ProtocolObject::from_ref(self),
-            target: self.as_any(),
-        };
         Some(f(browser, wiring))
     }
 }

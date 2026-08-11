@@ -125,6 +125,10 @@ impl Browser {
         self.chrome.text()
     }
 
+    pub fn window(&self) -> &NSWindow {
+        &self.window
+    }
+
     pub fn present(&self) {
         self.window.center();
         self.window.makeKeyAndOrderFront(None);
