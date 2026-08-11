@@ -35,6 +35,7 @@ const SWEEP_INTERVAL: f64 = 60.0;
 
 pub struct Ivars {
     browser: RefCell<Option<Browser>>,
+    second_browser: RefCell<Option<Browser>>,
     /// URL to open at launch, taken from the command line.
     start_url: String,
 }
@@ -283,13 +284,62 @@ define_class!(
         #[unsafe(method(splitScreen:))]
         fn split_screen(&self, _sender: Option<&AnyObject>) {
             let mtm = self.mtm();
-            self.with(|browser, wiring| {
-                if browser.entitlements().allows(Feature::DualView) {
-                    browser.snap_left(mtm);
+            let entitlements = Entitlements::load();
+            if !entitlements.allows(Feature::DualView) {
+                self.with(|browser, wiring| browser.open_tab(vel_pro::funding_url(), wiring));
+                return;
+            }
+
+            // Snap primary window to Left 50%
+            self.with(|browser, _| browser.snap_left(mtm));
+
+            // Check if second browser window exists, otherwise create it on Right 50%
+            let mut second_slot = self.ivars().second_browser.borrow_mut();
+            if second_slot.is_none() {
+                let right_rect = if let Some(screen) = objc2_app_kit::NSScreen::mainScreen(mtm) {
+                    let visible = screen.visibleFrame();
+                    let half_w = visible.size.width / 2.0;
+                    objc2_foundation::NSRect::new(
+                        objc2_foundation::NSPoint::new(visible.origin.x + half_w, visible.origin.y),
+                        objc2_foundation::NSSize::new(half_w, visible.size.height),
+                    )
                 } else {
-                    browser.open_tab(vel_pro::funding_url(), wiring);
-                }
-            });
+                    objc2_foundation::NSRect::new(
+                        objc2_foundation::NSPoint::new(640.0, 0.0),
+                        objc2_foundation::NSSize::new(640.0, 800.0),
+                    )
+                };
+
+                let mut second = Browser::new_with_frame(
+                    right_rect,
+                    ProtocolObject::from_ref(self),
+                    self.as_any(),
+                    Actions {
+                        submit: sel!(submitAddress:),
+                        back: sel!(goBackPage:),
+                        forward: sel!(goForwardPage:),
+                        new_tab: sel!(newTab:),
+                        select_tab: sel!(selectTab:),
+                    },
+                    mtm,
+                );
+
+                load_blocklist(second.rules(), entitlements, mtm);
+                second.present();
+
+                let wiring = Wiring {
+                    nav: ProtocolObject::from_ref(self),
+                    ui: ProtocolObject::from_ref(self),
+                    msg: ProtocolObject::from_ref(self),
+                    target: self.as_any(),
+                };
+                let start = self.ivars().start_url.clone();
+                second.open_tab(&start, wiring);
+                *second_slot = Some(second);
+            } else if let Some(second) = second_slot.as_mut() {
+                second.snap_right(mtm);
+                second.present();
+            }
         }
 
         /// The two funding pages, and the only marketing anywhere in the app.
@@ -340,6 +390,7 @@ impl Delegate {
     pub fn new(start_url: String, mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm).set_ivars(Ivars {
             browser: RefCell::new(None),
+            second_browser: RefCell::new(None),
             start_url,
         });
         unsafe { msg_send![super(this), init] }

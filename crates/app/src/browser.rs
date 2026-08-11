@@ -142,6 +142,71 @@ impl Browser {
         }
     }
 
+    pub fn snap_right(&self, mtm: MainThreadMarker) {
+        if let Some(screen) = objc2_app_kit::NSScreen::mainScreen(mtm) {
+            let visible = screen.visibleFrame();
+            let half_w = visible.size.width / 2.0;
+            let right_rect = NSRect::new(
+                NSPoint::new(visible.origin.x + half_w, visible.origin.y),
+                NSSize::new(half_w, visible.size.height),
+            );
+            self.window.setFrame_display(right_rect, true);
+        }
+    }
+
+    pub fn new_with_frame(
+        content: NSRect,
+        window_delegate: &ProtocolObject<dyn NSWindowDelegate>,
+        target: &AnyObject,
+        actions: Actions,
+        mtm: MainThreadMarker,
+    ) -> Self {
+        let style = NSWindowStyleMask::Titled
+            | NSWindowStyleMask::Closable
+            | NSWindowStyleMask::Miniaturizable
+            | NSWindowStyleMask::Resizable
+            | NSWindowStyleMask::FullSizeContentView;
+
+        let window = unsafe {
+            NSWindow::initWithContentRect_styleMask_backing_defer(
+                NSWindow::alloc(mtm),
+                content,
+                style,
+                NSBackingStoreType::Buffered,
+                false,
+            )
+        };
+        let entitlements = Entitlements::load();
+        let title = if entitlements.is_supporter() {
+            "Vel ✨ VIP"
+        } else {
+            "Vel"
+        };
+        window.setTitle(&NSString::from_str(title));
+        window.setTitlebarAppearsTransparent(true);
+        window.setTitleVisibility(NSWindowTitleVisibility::Hidden);
+        window.setMinSize(NSSize::new(360.0, 280.0));
+        window.setDelegate(Some(window_delegate));
+        unsafe { window.setReleasedWhenClosed(false) };
+
+        let root = NSView::new(mtm);
+        root.setWantsLayer(true);
+        window.setContentView(Some(&root));
+
+        let chrome = Chrome::new(target, actions, mtm);
+        root.addSubview(chrome.view());
+
+        Self {
+            window,
+            root,
+            chrome,
+            host: Host::new(Session::Persistent, mtm),
+            rules: Rules::new(),
+            tabs: Tabs::new(),
+            entitlements,
+        }
+    }
+
     // -- tabs ---------------------------------------------------------------
 
     pub fn open_tab(&mut self, url: &str, wiring: Wiring<'_>) {
