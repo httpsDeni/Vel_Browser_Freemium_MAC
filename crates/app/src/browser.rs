@@ -13,7 +13,7 @@ use objc2_app_kit::{
     NSWindowStyleMask, NSWindowTitleVisibility,
 };
 use objc2_foundation::{NSPoint, NSRect, NSSize, NSString};
-use objc2_web_kit::{WKNavigationDelegate, WKScriptMessageHandler, WKWebView};
+use objc2_web_kit::{WKNavigationDelegate, WKScriptMessageHandler, WKUIDelegate, WKWebView};
 use vel_engine::{Host, Rules, Session};
 use vel_pro::{Entitlements, Feature};
 
@@ -31,6 +31,7 @@ use crate::tabs::{self, Swept, Tabs};
 #[derive(Clone, Copy)]
 pub struct Wiring<'a> {
     pub nav: &'a ProtocolObject<dyn WKNavigationDelegate>,
+    pub ui: &'a ProtocolObject<dyn WKUIDelegate>,
     pub msg: &'a ProtocolObject<dyn WKScriptMessageHandler>,
     /// Target for tab-strip buttons, which are rebuilt as tabs come and go.
     pub target: &'a AnyObject,
@@ -204,6 +205,7 @@ impl Browser {
             // Freshly built: wire it up, then load. Delegates go on first so
             // the load's own callbacks are not missed.
             page.set_navigation_delegate(wiring.nav);
+            page.set_ui_delegate(wiring.ui);
             page.set_message_handler(wiring.msg);
             if let Some(url) = &url {
                 page.load(url);

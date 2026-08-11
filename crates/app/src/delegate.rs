@@ -15,8 +15,8 @@ use objc2::{define_class, msg_send, sel, DefinedClass, MainThreadMarker, MainThr
 use objc2_app_kit::{NSApplication, NSApplicationDelegate, NSWindowDelegate};
 use objc2_foundation::{NSNotification, NSObject, NSObjectProtocol, NSString, NSTimer};
 use objc2_web_kit::{
-    WKNavigation, WKNavigationDelegate, WKScriptMessage, WKScriptMessageHandler,
-    WKUserContentController, WKWebView,
+    WKNavigation, WKNavigationAction, WKNavigationDelegate, WKScriptMessage, WKScriptMessageHandler,
+    WKUIDelegate, WKUserContentController, WKWebView, WKWebViewConfiguration, WKWindowFeatures,
 };
 use vel_engine::script::{self, PageEvent};
 
@@ -139,6 +139,28 @@ define_class!(
             // Reflect the new URL in the address bar as soon as the
             // navigation commits, rather than when the page finishes.
             self.with(|browser, wiring| browser.page_changed(view, wiring));
+        }
+    }
+
+    unsafe impl WKUIDelegate for Delegate {
+        #[unsafe(method(webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:))]
+        fn create_web_view(
+            &self,
+            _view: &WKWebView,
+            _configuration: &WKWebViewConfiguration,
+            action: &WKNavigationAction,
+            _features: &WKWindowFeatures,
+        ) -> Option<&WKWebView> {
+            let request = unsafe { action.request() };
+            if let Some(url) = request.URL() {
+                if let Some(url_str) = url.absoluteString() {
+                    let text = url_str.to_string();
+                    if !text.is_empty() {
+                        self.with(|browser, wiring| browser.open_tab(&text, wiring));
+                    }
+                }
+            }
+            None
         }
     }
 
@@ -366,6 +388,7 @@ impl Delegate {
         let browser = slot.as_mut()?;
         let wiring = Wiring {
             nav: ProtocolObject::from_ref(self),
+            ui: ProtocolObject::from_ref(self),
             msg: ProtocolObject::from_ref(self),
             target: self.as_any(),
         };
