@@ -143,6 +143,7 @@ impl Browser {
                 NSSize::new(half_w, visible.size.height),
             );
             self.window.setFrame_display(left_rect, true);
+            self.layout();
         }
     }
 
@@ -155,6 +156,7 @@ impl Browser {
                 NSSize::new(half_w, visible.size.height),
             );
             self.window.setFrame_display(right_rect, true);
+            self.layout();
         }
     }
 

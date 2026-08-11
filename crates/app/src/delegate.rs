@@ -126,6 +126,11 @@ define_class!(
                     browser.layout();
                 }
             }
+            if let Ok(second_slot) = self.ivars().second_browser.try_borrow() {
+                if let Some(second) = second_slot.as_ref() {
+                    second.layout();
+                }
+            }
         }
     }
 
