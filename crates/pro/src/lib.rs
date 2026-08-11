@@ -59,14 +59,17 @@ pub enum Feature {
     MemorySaver,
     /// The picture-in-picture shortcut.
     PictureInPicture,
+    /// Side-by-side split screen window mode.
+    DualView,
 }
 
 impl Feature {
-    pub const ALL: [Feature; 4] = [
+    pub const ALL: [Feature; 5] = [
         Feature::ContentBlocking,
         Feature::CustomFilters,
         Feature::MemorySaver,
         Feature::PictureInPicture,
+        Feature::DualView,
     ];
 
     pub fn label(self) -> &'static str {
@@ -75,6 +78,7 @@ impl Feature {
             Feature::CustomFilters => "Custom filter lists",
             Feature::MemorySaver => "Memory saver",
             Feature::PictureInPicture => "Picture in Picture",
+            Feature::DualView => "Dual View Split Screen",
         }
     }
 }
@@ -102,7 +106,8 @@ pub fn required_tier(feature: Feature) -> Tier {
         Feature::ContentBlocking
         | Feature::CustomFilters
         | Feature::MemorySaver
-        | Feature::PictureInPicture => Tier::Supporter,
+        | Feature::PictureInPicture
+        | Feature::DualView => Tier::Supporter,
     }
 }
 

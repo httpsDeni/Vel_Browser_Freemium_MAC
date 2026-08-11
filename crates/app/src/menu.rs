@@ -71,6 +71,15 @@ pub fn install(
     let file = NSMenu::new(mtm);
     item(&file, "New Tab", Some(sel!(newTab:)), "t", CMD, Some(target), mtm);
     item(&file, "Close Tab", Some(sel!(closeTab:)), "w", CMD, Some(target), mtm);
+    item(
+        &file,
+        &gated("Dual Screen Split View", Feature::DualView, entitlements),
+        Some(sel!(splitScreen:)),
+        "d",
+        CMD | NSEventModifierFlags::Shift,
+        Some(target),
+        mtm,
+    );
     submenu(&main, "File", file, mtm);
 
     // --- edit --------------------------------------------------------------

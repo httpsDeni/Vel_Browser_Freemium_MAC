@@ -280,6 +280,18 @@ define_class!(
             });
         }
 
+        #[unsafe(method(splitScreen:))]
+        fn split_screen(&self, _sender: Option<&AnyObject>) {
+            let mtm = self.mtm();
+            self.with(|browser, wiring| {
+                if browser.entitlements().allows(Feature::DualView) {
+                    browser.snap_left(mtm);
+                } else {
+                    browser.open_tab(vel_pro::funding_url(), wiring);
+                }
+            });
+        }
+
         /// The two funding pages, and the only marketing anywhere in the app.
         #[unsafe(method(openSponsors:))]
         fn open_sponsors(&self, _sender: Option<&AnyObject>) {

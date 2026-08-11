@@ -130,6 +130,18 @@ impl Browser {
         self.window.makeKeyAndOrderFront(None);
     }
 
+    pub fn snap_left(&self, mtm: MainThreadMarker) {
+        if let Some(screen) = objc2_app_kit::NSScreen::mainScreen(mtm) {
+            let visible = screen.visibleFrame();
+            let half_w = visible.size.width / 2.0;
+            let left_rect = NSRect::new(
+                visible.origin,
+                NSSize::new(half_w, visible.size.height),
+            );
+            self.window.setFrame_display(left_rect, true);
+        }
+    }
+
     // -- tabs ---------------------------------------------------------------
 
     pub fn open_tab(&mut self, url: &str, wiring: Wiring<'_>) {
