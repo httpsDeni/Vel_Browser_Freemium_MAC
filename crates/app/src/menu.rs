@@ -30,7 +30,7 @@ pub fn install(
     app_menu.addItem(&NSMenuItem::separatorItem(mtm));
     if entitlements.is_supporter() {
         // No call to action for someone who already paid.
-        let status = item(&app_menu, "Supporter — thank you", None, "", CMD, None, mtm);
+        let status = item(&app_menu, "✨ VIP Supporter — thank you!", None, "", CMD, None, mtm);
         status.setEnabled(false);
     } else {
         item(
